@@ -11,6 +11,9 @@ import * as gfx from 'gophergfx'
 
 import { GUI } from 'dat.gui'
 import { AnimatedCharacter } from './AnimatedCharacter'
+import { AntCharacterGeometry } from './AntCharacterGeometry';
+import { SkeletonCharacterGeometry } from './SkeletonCharacterGeometry';
+
 
 enum AppState
 {
@@ -164,8 +167,11 @@ export class App extends gfx.GfxApp
             // you pick keep the character within the bounds of the screen when the
             // animations are played in order 1-5.
             //
-            // Don't forget to trim the animations similar to the other clips below.
-
+            // Don't forget to trim the animations similar to the other clips below
+            this.balletDanceMotions.push(gfx.AnimationLoader.loadAMC('./assets/data/05_10.amc', this.balletCharacter));
+            this.balletDanceMotions.push(gfx.AnimationLoader.loadAMC('./assets/data/05_09.amc', this.balletCharacter));
+            this.balletDanceMotions.push(gfx.AnimationLoader.loadAMC('./assets/data/05_20.amc', this.balletCharacter));
+            this.balletDanceMotions.push(gfx.AnimationLoader.loadAMC('./assets/data/05_06.amc', this.balletCharacter));
 
         }
         else if(this.state == AppState.LOADING_ANIMATIONS && this.assetManager.allAssetsLoaded())
@@ -196,7 +202,21 @@ export class App extends gfx.GfxApp
             // When you're done, play each  clip and make sure:
             // - there is no "idle" time at the start or end of each clip
             // - the character stays on screen when you play each motion in sequence
-
+            this.balletDanceMotions[1].trimFront(120); // Assuming 1 second of idle at the start
+            this.balletDanceMotions[1].trimBack(120);  // Assuming 1 second of idle at the end
+            this.balletDanceMotions[1].makeLoop(50);
+        
+            this.balletDanceMotions[2].trimFront(120); 
+            this.balletDanceMotions[2].trimBack(120); 
+            // No need to loop the same motion used for the base loop
+        
+            this.balletDanceMotions[3].trimFront(120); 
+            this.balletDanceMotions[3].trimBack(120); 
+            this.balletDanceMotions[3].makeLoop(50);
+        
+            this.balletDanceMotions[4].trimFront(120); 
+            this.balletDanceMotions[4].trimBack(120); 
+            this.balletDanceMotions[4].makeLoop(50);
 
             // Set the scene and create the geometry for the animated characters
             this.changeScene();
@@ -242,6 +262,25 @@ export class App extends gfx.GfxApp
         this.salsaLeadCharacter.createGeometry(this.currentCharacter);
         this.salsaFollowCharacter.createGeometry(this.currentCharacter);
         this.balletCharacter.createGeometry(this.currentCharacter);
+
+        if (this.currentCharacter === 'Ant') {
+            // Create an instance of AntCharacterGeometry
+            const antGeometry = new AntCharacterGeometry();
+            // Call createGeometry on each skeleton
+            antGeometry.createGeometry(this.salsaLeadCharacter);
+            antGeometry.createGeometry(this.salsaFollowCharacter);
+            antGeometry.createGeometry(this.balletCharacter);
+            const skeletonGeometry = new SkeletonCharacterGeometry();
+            skeletonGeometry.createGeometry(this.salsaLeadCharacter);
+            skeletonGeometry.createGeometry(this.salsaFollowCharacter);
+            skeletonGeometry.createGeometry(this.balletCharacter);
+        } else {
+            // For Axes and Skeleton modes, clear ant geometries if they exist
+            // and create the requested geometry type
+            this.salsaLeadCharacter.createGeometry(this.currentCharacter);
+            this.salsaFollowCharacter.createGeometry(this.currentCharacter);
+            this.balletCharacter.createGeometry(this.currentCharacter);
+        }
     }
 
 
@@ -309,7 +348,11 @@ export class App extends gfx.GfxApp
     {
 
         // PART 4.3: Overlay the animation, similar to motion 1.
-        
+        if(this.state == AppState.ANIMATING_CHARACTERS && this.balletCharacter.visible) 
+        {
+            this.balletCharacter.animationController.overlay(this.balletDanceMotions[1], 100);
+            console.log('Queueing motion 2; queue size is: ' + this.balletCharacter.animationController.getQueueCount());
+        }
     }
 
 
@@ -317,7 +360,11 @@ export class App extends gfx.GfxApp
     {
 
         // PART 4.3: Overlay the animation, similar to motion 1.
-
+        if(this.state == AppState.ANIMATING_CHARACTERS && this.balletCharacter.visible) 
+        {
+            this.balletCharacter.animationController.overlay(this.balletDanceMotions[2], 100);
+            console.log('Queueing motion 3; queue size is: ' + this.balletCharacter.animationController.getQueueCount());
+        }
     }
 
 
@@ -325,7 +372,11 @@ export class App extends gfx.GfxApp
     {
 
         // PART 4.3: Overlay the animation, similar to motion 1.
-
+        if(this.state == AppState.ANIMATING_CHARACTERS && this.balletCharacter.visible) 
+        {
+            this.balletCharacter.animationController.overlay(this.balletDanceMotions[3], 100);
+            console.log('Queueing motion 4; queue size is: ' + this.balletCharacter.animationController.getQueueCount());
+        }
     }
 
 
@@ -333,6 +384,10 @@ export class App extends gfx.GfxApp
     {
 
         // PART 4.3: Overlay the animation, similar to motion 1.
-
+        if(this.state == AppState.ANIMATING_CHARACTERS && this.balletCharacter.visible) 
+        {
+            this.balletCharacter.animationController.overlay(this.balletDanceMotions[4], 100);
+            console.log('Queueing motion 5; queue size is: ' + this.balletCharacter.animationController.getQueueCount());
+        }
     }
 }

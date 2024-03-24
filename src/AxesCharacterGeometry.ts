@@ -24,16 +24,16 @@ export class AxesCharacterGeometry
 
     public createGeometry(skeleton: gfx.Skeleton): void
     {
-        // This is an example of how to add axes to the root of the skeleton.
-        // You should comment out this code and add geometry to each bone
-        // in the recursive method below.
-        const axes = gfx.Geometry3Factory.createAxes(0.15);
-        skeleton.add(axes);
+        //This is an example of how to add axes to the root of the skeleton.
+        //You should comment out this code and add geometry to each bone
+        //in the recursive method below.
+        // const axes = gfx.Geometry3Factory.createAxes(0.15);
+        // skeleton.add(axes);
 
-        // Call the recursive method for each root bone
+        //Call the recursive method for each root bone
         skeleton.children.forEach((child: gfx.Node3) => {
             if(child instanceof gfx.Bone)
-                this.createGeometryRecursive(child);
+                this.createGeometryRecursive(child as gfx.Bone);
         });
     }
 
@@ -43,5 +43,18 @@ export class AxesCharacterGeometry
         // you should see a skeleton in a "T"-pose, with blue axis pointing
         // to the bone's parent in the skeleton.  See the instructor's
         // implementation for an example.
+        
+        const axes = gfx.Geometry3Factory.createAxes(0.15);
+        axes.lookAt(bone.direction);
+        bone.add(axes);
+        
+    
+        // Recursively call this method for each of the bone's children
+        bone.children.forEach((child: gfx.Node3) => {
+            if (child instanceof gfx.Bone) {
+                this.createGeometryRecursive(child);
+            }
+        })
+
     }
 }

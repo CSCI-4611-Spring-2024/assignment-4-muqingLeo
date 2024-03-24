@@ -33,6 +33,18 @@ export class AntCharacterGeometry
         });
     }
 
+    private addAntGeometryRecursive(bone: gfx.Bone): void
+    {
+        // Your existing code to add the ant geometries...
+
+        // Recursively call this method for each of the bone's children
+        bone.children.forEach((child: gfx.Node3) => {
+            if (child instanceof gfx.Bone) {
+                this.addAntGeometryRecursive(child as gfx.Bone);
+            }
+        });
+    }
+
     private createGeometryRecursive(bone: gfx.Bone): void
     {
         
@@ -55,21 +67,66 @@ export class AntCharacterGeometry
         // demonstrate your knowledge of composing transformations; at least one
         // part of the face should adjust the position, the rotation, and the
         // scale (like the antennae on the instructor solution).
-
-        // PART 3.1: Draw specific parts of the character
-        // if (bone.name == 'lowerback')
-        // {
-        // }
-        // else if (bone.name == 'upperback')
-        // {
-        // }
-        // else if (bone.name == 'thorax')
-        // {
-        // }
-        // else if (bone.name == 'head')
-        // {
         //     // PART 3.2: Add a face to the character
         // }
+        {
+            // Assume basic dimensions for body parts
+            const headScale = new gfx.Vector3(0.1, 0.1, 0.1);
+            const eyeScale = new gfx.Vector3(0.03, 0.03, 0.03);
+
+            if (bone.name == 'head') {
+                // Create and position the geometry for the head
+                const headMesh = gfx.Geometry3Factory.createSphere(1, 2);
+                const S = gfx.Matrix4.makeScale(headScale);
+                const R = gfx.Matrix4.makeAlign(new gfx.Vector3(0, 1, 0), bone.direction);
+                const T = gfx.Matrix4.makeTranslation(new gfx.Vector3(0, bone.length/2, 0));
+                const M = gfx.Matrix4.multiplyAll(R, T, S);
+                headMesh.setLocalToParentMatrix(M, false);
+                bone.add(headMesh);
+                
+                // PART 3.2: Add a face to the character
+                // Create and position geometries for eyes, mouth, etc.
+                const RighteyeMesh = gfx.Geometry3Factory.createSphere(0.05, 2);
+                const RighteyeOffset = new gfx.Vector3(0.1, 0.1, 0.001); 
+                const RighteyeMatrix = gfx.Matrix4.makeTranslation(RighteyeOffset);
+                RighteyeMesh.setLocalToParentMatrix(RighteyeMatrix, false);
+                bone.add(RighteyeMesh);
+
+                const LefteyeMesh = gfx.Geometry3Factory.createSphere(0.05, 2);
+                const LefteyeOffset = new gfx.Vector3(-0.1, 0.1, 0.001); 
+                const LefteyeMatrix = gfx.Matrix4.makeTranslation(LefteyeOffset);
+                LefteyeMesh.setLocalToParentMatrix(LefteyeMatrix, false);
+                bone.add(LefteyeMesh);
+                
+                // Add more face features similarly
+                // ...
+            }
+            else if (bone.name == 'thorax' || bone.name == 'upperback') {
+                // Create and position the geometry for body segments
+                const bodyMesh = gfx.Geometry3Factory.createSphere(bone.length, 2); // Scale the sphere to be proportional to the bone length, with decent detail
+                const bodyPos = new gfx.Vector3(0, bone.length / 2, 0); // Center the sphere on the bone
+                const bodyMatrix = gfx.Matrix4.makeTranslation(bodyPos);
+                bodyMesh.setLocalToParentMatrix(bodyMatrix, false);
+                bone.add(bodyMesh);
+            }
+            else if (bone.name == 'lowerback') {
+                const lowerBackMesh = gfx.Geometry3Factory.createSphere(1.5, 2); 
+                const ovalScale = new gfx.Vector3(bone.length * 0.8, bone.length, bone.length * 0.8); 
+                const R = gfx.Matrix4.makeAlign(new gfx.Vector3(0, 1, 0), bone.direction);
+                const S = gfx.Matrix4.makeScale(ovalScale);
+                const T = gfx.Matrix4.makeTranslation(new gfx.Vector3(0, bone.length / 2, 0)); 
+                const M = gfx.Matrix4.multiplyAll(R, T, S); 
+                lowerBackMesh.setLocalToParentMatrix(M, false);
+                bone.add(lowerBackMesh);
+            }
+            
+            // Recursively call this method for each of the bone's children
+            bone.children.forEach((child: gfx.Node3) => {
+                if (child instanceof gfx.Bone) {
+                    this.createGeometryRecursive(child as gfx.Bone);
+                }
+            });
 
     }
+}
 }

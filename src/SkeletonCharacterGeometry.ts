@@ -41,5 +41,30 @@ export class SkeletonCharacterGeometry
         // complete, the skeleton should show representations of every bone, and
         // there should not be gaps between bones.
 
+
+        // const armMesh = gfx.Geometry3Factory.createBox();
+        // const S = gfx.Matrix4.makeScale(new gfx.Vector3(0.05, bone.length, 0.05));
+        // const R = gfx.Matrix4.makeAlign(new gfx.Vector3(0, 1, 0), bone.direction);
+        // const T = gfx.Matrix4.makeTranslation(new gfx.Vector3(0, bone.length/2, 0));
+        // const M = gfx.Matrix4.multiplyAll(R, T, S);
+        // armMesh.setLocalToParentMatrix(M, false);
+
+        const cylinderMesh = gfx.Geometry3Factory.createCylinder(20, 0.01, 0.5);
+        
+        const S = gfx.Matrix4.makeScale(new gfx.Vector3(0.5, 2*bone.length, 0.5));
+        const R = gfx.Matrix4.makeAlign(new gfx.Vector3(0, 1, 0), bone.direction);
+        const T = gfx.Matrix4.makeTranslation(new gfx.Vector3(0, -1 * bone.length/2, 0));
+        const M = gfx.Matrix4.multiplyAll(R, T, S);   
+
+        cylinderMesh.setLocalToParentMatrix(M, false);
+        bone.add(cylinderMesh);
+
+        // Recursively call this method for each of the bone's children.
+        bone.children.forEach((child: gfx.Node3) => {
+            if (child instanceof gfx.Bone) {
+                this.createGeometryRecursive(child);
+            }
+        });
     }
+
 }
