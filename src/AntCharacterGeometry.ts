@@ -72,7 +72,9 @@ export class AntCharacterGeometry
         {
             // Assume basic dimensions for body parts
             const headScale = new gfx.Vector3(0.1, 0.1, 0.1);
-            const eyeScale = new gfx.Vector3(0.03, 0.03, 0.03);
+            const eyeMaterial = new gfx.UnlitMaterial;
+            const mouthMaterial = new gfx.PhongMaterial;
+
 
             if (bone.name == 'head') {
                 // Create and position the geometry for the head
@@ -90,16 +92,22 @@ export class AntCharacterGeometry
                 const RighteyeOffset = new gfx.Vector3(0.1, 0.1, 0.001); 
                 const RighteyeMatrix = gfx.Matrix4.makeTranslation(RighteyeOffset);
                 RighteyeMesh.setLocalToParentMatrix(RighteyeMatrix, false);
+                RighteyeMesh.material = eyeMaterial;
                 bone.add(RighteyeMesh);
 
                 const LefteyeMesh = gfx.Geometry3Factory.createSphere(0.05, 2);
                 const LefteyeOffset = new gfx.Vector3(-0.1, 0.1, 0.001); 
                 const LefteyeMatrix = gfx.Matrix4.makeTranslation(LefteyeOffset);
                 LefteyeMesh.setLocalToParentMatrix(LefteyeMatrix, false);
+                LefteyeMesh.material = eyeMaterial;
                 bone.add(LefteyeMesh);
-                
-                // Add more face features similarly
-                // ...
+
+                const mouthMesh = gfx.Geometry3Factory.createSphere(0.03, 2);
+                const mouthOffset = new gfx.Vector3(0, 0, 0.1);
+                const mouthMatrix = gfx.Matrix4.makeTranslation(mouthOffset);
+                mouthMesh.setLocalToParentMatrix(mouthMatrix, false);
+                mouthMesh.material = mouthMaterial;
+                bone.add(mouthMesh);
             }
             else if (bone.name == 'thorax' || bone.name == 'upperback') {
                 // Create and position the geometry for body segments

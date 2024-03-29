@@ -202,13 +202,12 @@ export class App extends gfx.GfxApp
             // When you're done, play each  clip and make sure:
             // - there is no "idle" time at the start or end of each clip
             // - the character stays on screen when you play each motion in sequence
-            this.balletDanceMotions[1].trimFront(120); // Assuming 1 second of idle at the start
-            this.balletDanceMotions[1].trimBack(120);  // Assuming 1 second of idle at the end
+            this.balletDanceMotions[1].trimFront(120);
+            this.balletDanceMotions[1].trimBack(120);  
             this.balletDanceMotions[1].makeLoop(50);
         
             this.balletDanceMotions[2].trimFront(120); 
             this.balletDanceMotions[2].trimBack(120); 
-            // No need to loop the same motion used for the base loop
         
             this.balletDanceMotions[3].trimFront(120); 
             this.balletDanceMotions[3].trimBack(120); 
